@@ -3,11 +3,28 @@ import re
 import uuid
 import subprocess
 from datetime import datetime
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 
-load_dotenv()
+
+def load_project_env() -> None:
+    root_env = Path.cwd() / ".env"
+    project_root = Path(__file__).resolve().parents[2]
+    creds_env = project_root / "CREDENTIALS" / "API" / ".env"
+
+    env_path = root_env if root_env.exists() else creds_env
+    if env_path.exists():
+        load_dotenv(dotenv_path=str(env_path))
+    else:
+        print(
+            f"Warning: no .env found. Checked {root_env} and {creds_env}."
+            " Create one in the project root or CREDENTIALS/API/.env."
+        )
+
+
+load_project_env()
 
 SERVICE_ACCOUNT_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 FIREBASE_BUCKET = os.getenv("FIREBASE_STORAGE_BUCKET")
@@ -81,4 +98,10 @@ if __name__ == "__main__":
     import uvicorn
 
     host = get_tailscale_ip() or "0.0.0.0"
-    uvicorn.run(app, host=host, port=8000)
+    uvicorn.run(
+        "main:app",
+        host=host,
+        port=8000,
+        reload=True,
+        reload_dirs=[str(Path(__file__).resolve().parent)],
+    )

@@ -37,11 +37,40 @@ FIREBASE_STORAGE_BUCKET=your-bucket-name.appspot.com
 
 Replace `your-bucket-name.appspot.com` with the actual Firebase storage bucket name.
 
+> The project will also load `.env` from `CREDENTIALS/API/.env` if a local backend `.env` is not present.
+
 ### 5. Start the backend
 
 ```bash
+cd /home/xian-flores/new-project/artist-hub/backend
 python main.py
 ```
+
+For automatic reload during development, use:
+
+```bash
+cd /home/xian-flores/new-project/artist-hub/backend
+./run_dev.sh
+```
+
+### 6. Run the website from the terminal
+
+If your frontend is static HTML in `front end/index.html`, serve it locally from the project root:
+
+```bash
+cd /home/xian-flores/new-project/front\ end
+python3 -m http.server 8080
+```
+
+Then open your browser at:
+
+- `http://127.0.0.1:8080/`
+
+The backend should be available at:
+
+- `http://127.0.0.1:8000/`
+
+This setup lets you test the frontend and backend without killing and rerunning the backend server every time.
 
 If you want to run with Uvicorn directly, use:
 
