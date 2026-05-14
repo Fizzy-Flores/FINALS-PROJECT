@@ -76,3 +76,29 @@ Look for the `inet` line and use that IP with port `8000`.
 - `main.py` uses Firebase credentials from `.env`
 - `requirements.txt` installs all Python dependencies
 - The endpoint to upload art is `POST /upload-art`
+
+## Secure API client script
+
+A root-level script named `api_client.py` is included for securely calling an API.
+
+### How to use it
+
+1. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+2. Edit `.env` and set your real API values:
+   ```env
+   API_BASE_URL=https://api.example.com
+   API_KEY=your_api_key_here
+   ```
+3. Run the client:
+   ```bash
+   python api_client.py
+   ```
+
+### Security details
+
+- No API key or credential is hardcoded in the code.
+- Sensitive values are loaded from environment variables.
+- `.env` is ignored by `.gitignore`, so secrets are not pushed to GitHub.

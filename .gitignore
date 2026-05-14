@@ -1,2 +1,4 @@
 .venv/
 artist-hub/backend/.venv/
+.env
+artist-hub/backend/.env
