@@ -6,23 +6,34 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from firebase_admin import credentials, firestore, initialize_app, storage
 
 load_dotenv()
 
 SERVICE_ACCOUNT_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 FIREBASE_BUCKET = os.getenv("FIREBASE_STORAGE_BUCKET")
 
-if not SERVICE_ACCOUNT_PATH or not FIREBASE_BUCKET:
-    raise RuntimeError(
-        "Missing required environment variables. Set GOOGLE_APPLICATION_CREDENTIALS and FIREBASE_STORAGE_BUCKET."
-    )
+# Initialize Firebase only if credentials are provided
+cred = None
+db = None
+if SERVICE_ACCOUNT_PATH and FIREBASE_BUCKET:
+    try:
+        from firebase_admin import credentials, firestore, initialize_app, storage
+        cred = credentials.Certificate(SERVICE_ACCOUNT_PATH)
+        initialize_app(cred, {"storageBucket": FIREBASE_BUCKET})
+        db = firestore.client()
+    except Exception as e:
+        print(f"Failed to initialize Firebase: {e}")
+        cred = None
+        db = None
+else:
+    print("Firebase credentials not provided. Running without Firebase.")
 
-cred = credentials.Certificate(SERVICE_ACCOUNT_PATH)
-initialize_app(cred, {"storageBucket": FIREBASE_BUCKET})
-
-db = firestore.client()
 app = FastAPI()
+
+
+@app.get("/")
+def read_root():
+    return {"message": "ARTIST HUB API is running", "firebase_enabled": db is not None}
 
 
 def get_tailscale_ip() -> str | None:
@@ -41,6 +52,9 @@ async def upload_art(
     title: str = Form(...),
     price: float = Form(...),
 ):
+    if not db:
+        raise HTTPException(status_code=503, detail="Firebase not configured. Cannot upload art.")
+
     if not file.filename:
         raise HTTPException(status_code=400, detail="File must have a filename.")
 
