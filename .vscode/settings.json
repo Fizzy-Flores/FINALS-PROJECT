@@ -1,0 +1,4 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/artist-hub/backend/.venv/bin/python",
+  "python.terminal.activateEnvironment": true
+}
