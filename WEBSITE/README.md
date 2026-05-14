@@ -53,7 +53,20 @@ cd /home/xian-flores/new-project/artist-hub/backend
 ./run_dev.sh
 ```
 
-### 6. Run the website from the terminal
+### 6. Start backend and frontend together in one terminal
+
+From the project root, run:
+
+```bash
+cd /home/xian-flores/new-project
+./start_site.sh
+```
+
+This script starts the backend with auto-reload and serves the frontend from `front end/` on the first available frontend port.
+
+If backend port `8000` is already in use, the script will automatically try the next available backend port. If frontend port `8080` is in use, it will try the next free port.
+
+### 7. Run the website from the terminal separately
 
 If your frontend is static HTML in `front end/index.html`, serve it locally from the project root:
 
@@ -62,7 +75,7 @@ cd /home/xian-flores/new-project/front\ end
 python3 -m http.server 8080
 ```
 
-Then open your browser at:
+Then open your browser at the port shown by the command output, for example:
 
 - `http://127.0.0.1:8080/`
 
